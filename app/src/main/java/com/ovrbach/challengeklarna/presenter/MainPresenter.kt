@@ -33,6 +33,12 @@ class MainPresenter {
     }
 
     fun handleResult(weatherResponse: Response<WeatherResponse>) {
-
+        lastWeather=weatherResponse
+        println("$lastWeather < RESPONSE")
+        when (weatherResponse) {
+            is Response.Success -> actityContract?.onWeatherFetched(weatherResponse.data)
+            is Response.Error -> actityContract?.onWeatherFetchedFailure(weatherResponse.error)
+            is Response.Cancelled -> actityContract?.onWeatherFetchedFailure(Exception("fetch was cancelled"))
+        }
     }
 }

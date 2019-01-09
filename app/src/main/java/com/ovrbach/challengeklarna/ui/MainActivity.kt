@@ -13,16 +13,20 @@ import android.widget.Toast
 import com.ovrbach.challengeklarna.R
 import com.ovrbach.challengeklarna.entity.WeatherResponse
 import com.ovrbach.challengeklarna.presenter.MainPresenter
+import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 const val REQUEST_PERMISSION_CODE = 2
 
 class MainActivity : Activity(), MainActivityContract {
 
     override fun onWeatherFetched(weather: WeatherResponse) {
+        println("UPDATE UI")
         updateUI(weather)
     }
 
     override fun onWeatherFetchedFailure(error: Throwable) {
+        error.printStackTrace()
         //todo showErrorMessage()
     }
 
@@ -37,6 +41,7 @@ class MainActivity : Activity(), MainActivityContract {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        presenter.actityContract = this
         tryAndGetLastLocation()
         getWeather()
     }
@@ -86,9 +91,9 @@ class MainActivity : Activity(), MainActivityContract {
 
 
     fun updateUI(weather: WeatherResponse) {
-        //        main_city_time.text
-        //        main_details.text
-        //        main_summary.text
+        main_city_time.text = Date((weather.currently.time * 1000).toLong()).toString()
+        main_details.text = weather.currently.getDetailsString()
+        main_summary.text = weather.currently.summary
     }
 
 }
