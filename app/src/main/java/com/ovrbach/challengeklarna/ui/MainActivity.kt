@@ -93,7 +93,3 @@ class MainActivity : Activity(), MainActivityContract {
 
 }
 
-interface MainActivityContract {
-    fun onWeatherFetched(weather: WeatherResponse)
-    fun onWeatherFetchedFailure(error: Throwable)
-}
