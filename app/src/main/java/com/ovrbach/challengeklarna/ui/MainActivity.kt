@@ -11,23 +11,36 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import com.ovrbach.challengeklarna.R
-import com.ovrbach.challengeklarna.entity.Weather
 import com.ovrbach.challengeklarna.entity.WeatherResponse
-import kotlinx.android.synthetic.main.activity_main.*
+import com.ovrbach.challengeklarna.presenter.MainPresenter
 
 const val REQUEST_PERMISSION_CODE = 2
 
-class MainActivity : Activity() {
+class MainActivity : Activity(), MainActivityContract {
+
+    override fun onWeatherFetched(weather: WeatherResponse) {
+        updateUI(weather)
+    }
+
+    override fun onWeatherFetchedFailure(error: Throwable) {
+        //todo showErrorMessage()
+    }
+
+    companion object {
+        val presenter = MainPresenter()
+    }
 
     private val permisssions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-    private lateinit var lastLocation: Location
+    private var lastLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         tryAndGetLastLocation()
+        getWeather()
     }
+
 
     fun tryAndGetLastLocation() {
         if (Build.VERSION.SDK_INT > 23)
@@ -41,7 +54,7 @@ class MainActivity : Activity() {
         lastLocation = locationService.getLastKnownLocation(
                 LocationManager.GPS_PROVIDER
         )
-        println("lastlocation: $lastLocation")
+        getWeather(lastLocation)
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -67,6 +80,10 @@ class MainActivity : Activity() {
         }
     }
 
+    fun getWeather(lastLocation: Location? = null) {
+        presenter.getLastWeather(lastLocation?.latitude, lastLocation?.longitude)
+    }
+
 
     fun updateUI(weather: WeatherResponse) {
         //        main_city_time.text
@@ -74,4 +91,9 @@ class MainActivity : Activity() {
         //        main_summary.text
     }
 
+}
+
+interface MainActivityContract {
+    fun onWeatherFetched(weather: WeatherResponse)
+    fun onWeatherFetchedFailure(error: Throwable)
 }
