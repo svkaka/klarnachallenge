@@ -8,6 +8,7 @@
 - format it a bit and remove empty lines, more readable variable names, some documentation
 - Add progress bar
 - nicer UI
+- forgot to clear activity in onStop
 
 ### parrallel codeverse
 ... where I can use other dependencies and had more time
